@@ -1,0 +1,11 @@
+
+Create a simple clean launchscreen
+
+Directly open in the moodboard.
+
+-You can add images or text
+-It can scale
+-It can rotate
+-It can move
+
+-A menu shows up on press for deleting
