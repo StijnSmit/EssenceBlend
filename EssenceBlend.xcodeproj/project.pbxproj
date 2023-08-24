@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		CB1E63552A96C90800AB2461 /* FloatingActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E63542A96C90800AB2461 /* FloatingActionBar.swift */; };
-		CB1E63572A96E1D700AB2461 /* BoardListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E63562A96E1D700AB2461 /* BoardListViewController.swift */; };
+		CB1E63572A96E1D700AB2461 /* BordListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB1E63562A96E1D700AB2461 /* BordListViewController.swift */; };
 		CB90E0552A962902003E73A2 /* ScrollViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB90E0542A962902003E73A2 /* ScrollViewDelegate.swift */; };
 		CB90E0572A963CAD003E73A2 /* todo.txt in Resources */ = {isa = PBXBuildFile; fileRef = CB90E0562A963CAC003E73A2 /* todo.txt */; };
-		CB9BB7842A96EC66000A45ED /* BoardNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9BB7832A96EC66000A45ED /* BoardNavigationBar.swift */; };
+		CB9BB7842A96EC66000A45ED /* BordNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB9BB7832A96EC66000A45ED /* BordNavigationBar.swift */; };
 		CBDFA1AC2A9501400099CF18 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFA1AB2A9501400099CF18 /* AppDelegate.swift */; };
 		CBDFA1AE2A9501400099CF18 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFA1AD2A9501400099CF18 /* SceneDelegate.swift */; };
 		CBDFA1B02A9501400099CF18 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBDFA1AF2A9501400099CF18 /* ViewController.swift */; };
@@ -43,10 +43,10 @@
 
 /* Begin PBXFileReference section */
 		CB1E63542A96C90800AB2461 /* FloatingActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionBar.swift; sourceTree = "<group>"; };
-		CB1E63562A96E1D700AB2461 /* BoardListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardListViewController.swift; sourceTree = "<group>"; };
+		CB1E63562A96E1D700AB2461 /* BordListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BordListViewController.swift; sourceTree = "<group>"; };
 		CB90E0542A962902003E73A2 /* ScrollViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrollViewDelegate.swift; sourceTree = "<group>"; };
 		CB90E0562A963CAC003E73A2 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = todo.txt; sourceTree = "<group>"; };
-		CB9BB7832A96EC66000A45ED /* BoardNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardNavigationBar.swift; sourceTree = "<group>"; };
+		CB9BB7832A96EC66000A45ED /* BordNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BordNavigationBar.swift; sourceTree = "<group>"; };
 		CBDFA1A82A9501400099CF18 /* EssenceBlend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EssenceBlend.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBDFA1AB2A9501400099CF18 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CBDFA1AD2A9501400099CF18 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -113,11 +113,11 @@
 			children = (
 				CBDFA1AB2A9501400099CF18 /* AppDelegate.swift */,
 				CBDFA1AD2A9501400099CF18 /* SceneDelegate.swift */,
-				CB1E63562A96E1D700AB2461 /* BoardListViewController.swift */,
+				CB1E63562A96E1D700AB2461 /* BordListViewController.swift */,
 				CBDFA1AF2A9501400099CF18 /* ViewController.swift */,
 				CB90E0542A962902003E73A2 /* ScrollViewDelegate.swift */,
 				CB1E63542A96C90800AB2461 /* FloatingActionBar.swift */,
-				CB9BB7832A96EC66000A45ED /* BoardNavigationBar.swift */,
+				CB9BB7832A96EC66000A45ED /* BordNavigationBar.swift */,
 				CBDFA1B12A9501400099CF18 /* Main.storyboard */,
 				CBDFA1B72A9501460099CF18 /* Assets.xcassets */,
 				CBDFA1B92A9501460099CF18 /* LaunchScreen.storyboard */,
@@ -277,8 +277,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB9BB7842A96EC66000A45ED /* BoardNavigationBar.swift in Sources */,
-				CB1E63572A96E1D700AB2461 /* BoardListViewController.swift in Sources */,
+				CB9BB7842A96EC66000A45ED /* BordNavigationBar.swift in Sources */,
+				CB1E63572A96E1D700AB2461 /* BordListViewController.swift in Sources */,
 				CBDFA1B62A9501400099CF18 /* EssenceBlend.xcdatamodeld in Sources */,
 				CB1E63552A96C90800AB2461 /* FloatingActionBar.swift in Sources */,
 				CB90E0552A962902003E73A2 /* ScrollViewDelegate.swift in Sources */,

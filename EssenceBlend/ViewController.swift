@@ -11,30 +11,7 @@ class ViewController: UIViewController {
     
     let paperColor = UIColor(red: 1.0, green: 0.995, blue: 0.951, alpha: 1.0)
     
-    let scrollView: UIScrollView = {
-        let this = UIScrollView()
-        this.translatesAutoresizingMaskIntoConstraints = false
-        this.maximumZoomScale = 10.0
-        this.minimumZoomScale = 0.2
-        return this
-    }()
-    var board: UIView!
-    
-    var addedImage: UIImageView?
-    var selectedImage: UIImageView?
-    
-    var topBar: BoardNavigationBar!
-    var floatingActionBar: FloatingActionBar!
-    
-    var panGesture: UIPanGestureRecognizer!
-    var pinchGesture: UIPinchGestureRecognizer!
-    var longPressGesture: UILongPressGestureRecognizer!
-    
-    var editMenuInteraction: UIEditMenuInteraction!
-    
-    var zoomScale: Double = 1.0
-    
-    var scrollDelegate = ScrollViewDelegate()
+    var scrollView: UIScrollView!
     
     lazy var itemEditMenu: UIMenu = {
         UIMenu(title: "Title", options: .displayInline, children: [
@@ -53,13 +30,31 @@ class ViewController: UIViewController {
                 self.deleteSelectedImage()
             }),
             UIAction(title: "Duplicate", handler: { [weak self] _ in
-                    print("Duplicate")
+                print("Duplicate")
             }),
             UIAction(title: "Preview", handler: { _ in
                 print("MenuItem1")
             })
         ])
     }()
+    
+    var board: UIView!
+    var selectedImageView: UIImageView?
+    
+    var topBar: BordNavigationBar!
+    var floatingActionBar: FloatingActionBar!
+    
+    var panGesture: UIPanGestureRecognizer!
+    var longPressGesture: UILongPressGestureRecognizer!
+    
+    var editMenuInteraction: UIEditMenuInteraction!
+    
+    var zoomScale: Double = 1.0
+    var scrollDelegate = ScrollViewDelegate()
+    
+    var imageViews: [UIImageView] = []
+    
+    var itemEditMenuLocation: CGPoint? = nil
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .darkContent
@@ -83,107 +78,39 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        createGestureRecognizers()
-        setupEditMenuInteraction()
-        
         view.backgroundColor = paperColor
-
-        view.insertSubview(scrollView, at: 0)
-        NSLayoutConstraint.activate([
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
         
-        scrollView.contentSize = CGSize(width: 10000, height: 10000)
-        scrollView.delegate = scrollDelegate
+        createScrollView()
+        createBord()
         
-        // Create and add grid background view
-        board = createBoard()
         scrollView.addSubview(board)
         scrollView.contentSize = board.frame.size
         
-        topBar = BoardNavigationBar()
-        topBar.delegate = self
-        view.addSubview(topBar)
-        NSLayoutConstraint.activate([
-            topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
-            topBar.widthAnchor.constraint(equalToConstant: 130),
-            topBar.heightAnchor.constraint(equalToConstant: 45)
-        ])
+        setupEditMenuInteraction()
         
-        floatingActionBar = FloatingActionBar()
-        view.addSubview(floatingActionBar)
-        NSLayoutConstraint.activate([
-            floatingActionBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            floatingActionBar.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
-            floatingActionBar.widthAnchor.constraint(equalToConstant: 110),
-            floatingActionBar.heightAnchor.constraint(equalToConstant: 45)
-        ])
+        createTopBar()
+        createFloatingActionBar()
         
+        createGestureRecognizers()
+        
+        // Simple hello world label
         let label = UILabel()
         label.anchorPoint = CGPoint(x: 0, y: 0)
         label.frame = CGRect(x: 100, y: 100, width: 200, height: 50)
         
         label.text = "Hello, World!"
+        label.textColor = UIColor.black
         label.textAlignment = .center
         board.addSubview(label)
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped(_:)))
-        scrollView.addGestureRecognizer(tapGesture)
-        scrollView.addGestureRecognizer(longPressGesture)
     }
     
     func createGestureRecognizers() {
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(imagePanned(_:)))
-        pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
         longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
-    }
-    
-    @objc func scrollViewTapped(_ gesture: UITapGestureRecognizer) {
-        // Handle tap gesture on the UIScrollView
-        // This method will be called when the user taps on the scroll view
-        let tapLocation = gesture.location(in: scrollView)
         
-        if addedImage == nil, let image = UIImage(named: "pencil") {
-            addedImage = UIImageView(image: image)
-            addedImage!.frame = CGRect(
-                x: tapLocation.x,
-                y: tapLocation.y,
-                width: image.size.width,
-                height: image.size.height)
-            //            addedImage?.anchorPoint = CGPoint(x: 0, y: 0)
-            addedImage?.isUserInteractionEnabled = true
-            
-            board.addSubview(addedImage!)
-            
-            let imageTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:)))
-            addedImage?.addGestureRecognizer(imageTapGestureRecognizer)
-        }
-        
-        if let selectedImage {
-            deselectImageView(selectedImage)
-        }
-    }
-    
-    func deselectImageView(_ imageView: UIImageView) {
-        imageView.layer.borderColor = UIColor.clear.cgColor
-        imageView.layer.borderWidth = 0.0
-        imageView.removeGestureRecognizer(panGesture)
-        selectedImage = nil
-    }
-    
-    func createBoard() -> UIView {
-
-        let board = UIView()
-        board.anchorPoint = CGPoint(x: 0, y: 0)
-        board.frame = CGRect(origin: .zero, size: scrollView.contentSize)
-        
-        board.addSubview(createGridBackgroundView())
-        
-        return board
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped(_:)))
+        scrollView.addGestureRecognizer(tapGesture)
+        scrollView.addGestureRecognizer(longPressGesture)
     }
     
     func createGridBackgroundView() -> UIView {
@@ -212,37 +139,142 @@ class ViewController: UIViewController {
         let patternImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-//        backgroundView.frame.size = scrollView.contentSize
         backgroundView.backgroundColor = UIColor(patternImage: patternImage!)
         
         return backgroundView
     }
 }
 
+/// UI Setup
+extension ViewController {
+    
+    func createScrollView() {
+        
+        scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.maximumZoomScale = 10.0
+        scrollView.minimumZoomScale = 0.2
+        view.insertSubview(scrollView, at: 0)
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        scrollView.contentSize = CGSize(width: 10000, height: 10000)
+        scrollView.delegate = scrollDelegate
+    }
+    
+    func createBord() {
+        
+        board = UIView()
+        board.anchorPoint = CGPoint(x: 0, y: 0)
+        board.frame = CGRect(origin: .zero, size: scrollView.contentSize)
+        board.addSubview(createGridBackgroundView())
+    }
+    
+    func createTopBar() {
+        topBar = BordNavigationBar()
+        topBar.delegate = self
+        view.addSubview(topBar)
+        NSLayoutConstraint.activate([
+            topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            topBar.widthAnchor.constraint(equalToConstant: 130),
+            topBar.heightAnchor.constraint(equalToConstant: 45)
+        ])
+    }
+    
+    func createFloatingActionBar() {
+        floatingActionBar = FloatingActionBar()
+        view.addSubview(floatingActionBar)
+        NSLayoutConstraint.activate([
+            floatingActionBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            floatingActionBar.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            floatingActionBar.widthAnchor.constraint(equalToConstant: 110),
+            floatingActionBar.heightAnchor.constraint(equalToConstant: 45)
+        ])
+    }
+}
+
+/// Create and Delete images
+extension ViewController {
+    
+    func add(_ image: UIImage, at: CGPoint) {
+        
+        let imageView = UIImageView(image: image)
+        imageView.frame = CGRect(
+            x: at.x,
+            y: at.y,
+            width: image.size.width,
+            height: image.size.height)
+        imageView.isUserInteractionEnabled = true
+        board.addSubview(imageView)
+        
+        let imageTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:)))
+        imageView.addGestureRecognizer(imageTapGestureRecognizer)
+        
+        imageViews.append(imageView)
+        selectImageView(imageView)
+    }
+    
+    func deleteSelectedImage() {
+        
+        imageViews.removeAll { imageView in
+            imageView == selectedImageView
+        }
+        selectedImageView?.removeFromSuperview()
+        selectedImageView = nil
+    }
+}
+
+/// Image selection and deselection
+extension ViewController {
+    
+    func selectImageView(_ imageView:  UIImageView) {
+        
+        if let selectedImageView {
+            deselectImageView(selectedImageView)
+        }
+        
+        imageView.layer.borderColor = UIColor.tintColor.cgColor
+        imageView.layer.borderWidth = 2.0
+        imageView.addGestureRecognizer(panGesture)
+        selectedImageView = imageView
+        
+        let config = createItemSelectedMenuConfiguration(item: imageView)
+        let configuration = UIEditMenuConfiguration(identifier: "itemSelected", sourcePoint: config.0)
+        configuration.preferredArrowDirection = config.1
+        editMenuInteraction.presentEditMenu(with: configuration)
+    }
+    
+    func deselectImageView(_ imageView: UIImageView) {
+        
+        imageView.layer.borderColor = UIColor.clear.cgColor
+        imageView.layer.borderWidth = 0.0
+        imageView.removeGestureRecognizer(panGesture)
+        selectedImageView = nil
+    }
+}
+
 /// Gesture handlers
 extension ViewController {
+    
+    @objc func scrollViewTapped(_ gesture: UITapGestureRecognizer) {
+        if let selectedImageView {
+            deselectImageView(selectedImageView)
+        }
+    }
     
     @objc func imageTapped(_ gesture: UITapGestureRecognizer) {
         
         guard let imageView = gesture.view as? UIImageView else { return }
         
-        if selectedImage == imageView {
-            
+        if selectedImageView == imageView {
             deselectImageView(imageView)
-            
         } else {
-            
-            imageView.layer.borderColor = UIColor.blue.cgColor
-            imageView.layer.borderWidth = 2.0
-            imageView.addGestureRecognizer(panGesture)
-            selectedImage = imageView
-            
-            print("touch location: \(gesture.location(in: scrollView))")
-            
-            let config = createItemSelectedMenuConfiguration(item: imageView)
-            let configuration = UIEditMenuConfiguration(identifier: "itemSelected", sourcePoint: config.0)
-            configuration.preferredArrowDirection = config.1
-            editMenuInteraction.presentEditMenu(with: configuration)
+            selectImageView(imageView)
         }
     }
     
@@ -257,23 +289,11 @@ extension ViewController {
         gesture.setTranslation(.zero, in: scrollView)
     }
     
-    @objc func handlePinch(_ gesture: UIPinchGestureRecognizer) {
-        var newScale = zoomScale * (gesture.scale)
-        
-        // Limit the zoom scale if needed
-        newScale = min(max(newScale, 0.5), 2.0)
-        zoomScale = newScale
-        gesture.scale = 1
-        print(zoomScale)
-        
-        for subView in scrollView.subviews {
-            subView.transform = CGAffineTransform(scaleX: zoomScale, y: zoomScale)
-        }
-    }
-    
     @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
+        
         guard gesture.state == .began else { return }
         
+        itemEditMenuLocation = gesture.location(in: scrollView)
         let configuration = UIEditMenuConfiguration(identifier: "longPressEdit", sourcePoint: gesture.location(in: scrollView))
         editMenuInteraction.presentEditMenu(with: configuration)
     }
@@ -283,11 +303,13 @@ extension ViewController {
 extension ViewController: UIEditMenuInteractionDelegate {
     
     func setupEditMenuInteraction() {
+        
         editMenuInteraction = UIEditMenuInteraction(delegate: self)
         scrollView.addInteraction(editMenuInteraction)
     }
     
     func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
+        
         if configuration.identifier.description == "longPressEdit" {
             return UIMenu(children: itemEditMenu.children)
         } else if configuration.identifier.description == "itemSelected" {
@@ -298,6 +320,7 @@ extension ViewController: UIEditMenuInteractionDelegate {
     }
     
     func createItemSelectedMenuConfiguration(item: UIView) -> (CGPoint, UIEditMenuArrowDirection) {
+        
         let scrollViewBounds = scrollView.bounds
         let zoomScale = scrollView.zoomScale
         
@@ -314,7 +337,7 @@ extension ViewController: UIEditMenuInteractionDelegate {
             y: zoomScale * item.frame.minY,
             width: zoomScale * item.frame.width,
             height: zoomScale * item.frame.height)
-
+        
         // Above
         if scaledItemFrame.minY - visibleFrame.minY > minimumDistance {
             print("Above with distance: \(scaledItemFrame.minY - visibleFrame.minY)")
@@ -333,7 +356,9 @@ extension ViewController: UIEditMenuInteractionDelegate {
 
 /// Image Picker
 extension ViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
     func showImagePickerOverlay() {
+        
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = .photoLibrary
         imagePicker.delegate = self
@@ -344,22 +369,55 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
         // Present the image picker with the overlay view controller
         present(imagePicker, animated: true, completion: nil)
     }
-}
-
-extension ViewController {
-    func deleteSelectedImage() {
-        selectedImage?.removeFromSuperview()
-        selectedImage = nil
-        addedImage = nil
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        
+        picker.dismiss(animated: true)
+        itemEditMenuLocation = nil
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        picker.dismiss(animated: true)
+        
+        guard let pickedImage = info[.originalImage] as? UIImage,
+              let tapLocation = itemEditMenuLocation else { return }
+        
+        let scaledImage = scaleImage(pickedImage)
+        
+        add(scaledImage, at: tapLocation)
+    }
+    
+    func scaleImage(_ image: UIImage) -> UIImage {
+        
+        let maxWidth: CGFloat = 400
+        let maxHeight: CGFloat = 500
+        
+        let widthRatio = maxWidth / image.size.width
+        let heightRatio = maxHeight / image.size.height
+        
+        var newSize: CGSize
+        if widthRatio < heightRatio {
+            newSize = CGSize(width: maxWidth, height: image.size.height * widthRatio)
+        } else {
+            newSize = CGSize(width: image.size.width * heightRatio, height: maxHeight)
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return scaledImage ?? image
     }
 }
 
-extension ViewController: BoardNavigationBarDelegate {
+extension ViewController: BordNavigationBarDelegate {
+    
     func back() {
         navigationController?.popViewController(animated: true)
     }
     
     func undo() { print("Undo") }
-    
     func redo() { print("Redo") }
 }

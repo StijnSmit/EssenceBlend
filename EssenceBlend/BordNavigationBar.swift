@@ -7,14 +7,14 @@
 
 import UIKit
 
-protocol BoardNavigationBarDelegate: AnyObject {
+protocol BordNavigationBarDelegate: AnyObject {
     func back()
     func undo()
     func redo()
 }
 
-class BoardNavigationBar: UIView {
-    weak var delegate: BoardNavigationBarDelegate?
+class BordNavigationBar: UIView {
+    weak var delegate: BordNavigationBarDelegate?
     let itemsColor = UIColor.white
     
     lazy var backButton: UIButton = {

@@ -27,7 +27,7 @@
         <!--Essence Blend-->
         <scene sceneID="6To-qu-7gM">
             <objects>
-                <viewController id="NmX-0d-Kl7" customClass="BoardListViewController" customModule="EssenceBlend" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="NmX-0d-Kl7" customClass="BordListViewController" customModule="EssenceBlend" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="P3N-lB-YGK">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
