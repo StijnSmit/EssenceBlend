@@ -8,17 +8,13 @@
 import UIKit
 
 class ScrollViewDelegate: NSObject, UIScrollViewDelegate {
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        print("ScrollViewWillBeginDragging")
-    }
+    
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        print("scrollViewDidZoom: \(scrollView.zoomScale)")
+        guard let grid = scrollView.subviews.first?.subviews.first else { return }
+        grid.isHidden = scrollView.zoomScale < 0.5
     }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        scrollView.subviews.first
-    }
-    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-        print("scrollViewDidEndZooming: \(scale)")
+        return scrollView.subviews.first
     }
 }

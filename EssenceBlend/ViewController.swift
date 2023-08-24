@@ -9,6 +9,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    let paperColor = UIColor(red: 1.0, green: 0.995, blue: 0.951, alpha: 1.0)
+    
     let scrollView: UIScrollView = {
         let this = UIScrollView()
         this.translatesAutoresizingMaskIntoConstraints = false
@@ -16,10 +18,12 @@ class ViewController: UIViewController {
         this.minimumZoomScale = 0.2
         return this
     }()
-    var gridBackgroundView: UIView!
+    var board: UIView!
     
     var addedImage: UIImageView?
     var selectedImage: UIImageView?
+    
+    var floatingActionBar: FloatingActionBar!
     
     var panGesture: UIPanGestureRecognizer!
     var pinchGesture: UIPinchGestureRecognizer!
@@ -62,14 +66,22 @@ class ViewController: UIViewController {
         ])
     }()
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .darkContent
+    }
+    override func viewWillLayoutSubviews() {
+        floatingActionBar.layout()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         createGestureRecognizers()
         setupEditMenuInteraction()
-        let height = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 50
-        view.addSubview(scrollView)
+        
+        view.backgroundColor = paperColor
+
+        view.insertSubview(scrollView, at: 0)
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -81,9 +93,18 @@ class ViewController: UIViewController {
         scrollView.delegate = scrollDelegate
         
         // Create and add grid background view
-        gridBackgroundView = createGridBackgroundView()
-        scrollView.addSubview(gridBackgroundView)
-        scrollView.contentSize = gridBackgroundView.frame.size
+        board = createBoard()
+        scrollView.addSubview(board)
+        scrollView.contentSize = board.frame.size
+        
+        floatingActionBar = FloatingActionBar()
+        view.addSubview(floatingActionBar)
+        NSLayoutConstraint.activate([
+            floatingActionBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            floatingActionBar.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            floatingActionBar.widthAnchor.constraint(equalToConstant: 110),
+            floatingActionBar.heightAnchor.constraint(equalToConstant: 45)
+        ])
         
         let label = UILabel()
         label.anchorPoint = CGPoint(x: 0, y: 0)
@@ -91,7 +112,7 @@ class ViewController: UIViewController {
         
         label.text = "Hello, World!"
         label.textAlignment = .center
-        gridBackgroundView.addSubview(label)
+        board.addSubview(label)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped(_:)))
         scrollView.addGestureRecognizer(tapGesture)
@@ -119,7 +140,7 @@ class ViewController: UIViewController {
             //            addedImage?.anchorPoint = CGPoint(x: 0, y: 0)
             addedImage?.isUserInteractionEnabled = true
             
-            gridBackgroundView.addSubview(addedImage!)
+            board.addSubview(addedImage!)
             
             let imageTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(imageTapped(_:)))
             addedImage?.addGestureRecognizer(imageTapGestureRecognizer)
@@ -137,6 +158,17 @@ class ViewController: UIViewController {
         selectedImage = nil
     }
     
+    func createBoard() -> UIView {
+
+        let board = UIView()
+        board.anchorPoint = CGPoint(x: 0, y: 0)
+        board.frame = CGRect(origin: .zero, size: scrollView.contentSize)
+        
+        board.addSubview(createGridBackgroundView())
+        
+        return board
+    }
+    
     func createGridBackgroundView() -> UIView {
         
         let backgroundView = UIView()
@@ -144,16 +176,16 @@ class ViewController: UIViewController {
         backgroundView.frame = CGRect(origin: .zero, size: scrollView.contentSize)
         
         // Set up grid pattern
-        let gridSize: CGFloat = 20.0 // Adjust as needed
+        let gridSize: CGFloat = 40.0 // Adjust as needed
         let gridPatternSize = CGSize(width: gridSize, height: gridSize)
         UIGraphicsBeginImageContextWithOptions(gridPatternSize, false, 0)
         let context = UIGraphicsGetCurrentContext()
         
-        context?.setFillColor(UIColor.white.cgColor)
+        context?.setFillColor(paperColor.cgColor)
         context?.fill(CGRect(origin: .zero, size: gridPatternSize))
         
         context?.setLineWidth(1.0)
-        context?.setStrokeColor(UIColor.lightGray.cgColor)
+        context?.setStrokeColor(UIColor.lightGray.withAlphaComponent(0.8).cgColor)
         
         context?.move(to: CGPoint(x: 0, y: gridSize))
         context?.addLine(to: CGPoint(x: gridSize, y: gridSize))
@@ -163,8 +195,9 @@ class ViewController: UIViewController {
         let patternImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        backgroundView.frame.size = scrollView.contentSize
+//        backgroundView.frame.size = scrollView.contentSize
         backgroundView.backgroundColor = UIColor(patternImage: patternImage!)
+        
         return backgroundView
     }
 }
