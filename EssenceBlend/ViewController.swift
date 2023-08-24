@@ -23,6 +23,7 @@ class ViewController: UIViewController {
     var addedImage: UIImageView?
     var selectedImage: UIImageView?
     
+    var topBar: BoardNavigationBar!
     var floatingActionBar: FloatingActionBar!
     
     var panGesture: UIPanGestureRecognizer!
@@ -37,18 +38,12 @@ class ViewController: UIViewController {
     
     lazy var itemEditMenu: UIMenu = {
         UIMenu(title: "Title", options: .displayInline, children: [
-            UIAction(title: "Pin", handler: { _ in
-                print("MenuItem1")
-            }),
             UIAction(title: "Photo", handler: { [weak self] _ in
                 self?.showImagePickerOverlay()
             }),
             UIAction(title: "Text", handler: { _ in
                 print("MenuItem1")
             }),
-            UIAction(title: "Recording", handler: { _ in
-                print("MenuItem1")
-            })
         ])
     }()
     
@@ -69,8 +64,15 @@ class ViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .darkContent
     }
+    
     override func viewWillLayoutSubviews() {
+        topBar.layout()
         floatingActionBar.layout()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     override func viewDidLoad() {
@@ -96,6 +98,16 @@ class ViewController: UIViewController {
         board = createBoard()
         scrollView.addSubview(board)
         scrollView.contentSize = board.frame.size
+        
+        topBar = BoardNavigationBar()
+        topBar.delegate = self
+        view.addSubview(topBar)
+        NSLayoutConstraint.activate([
+            topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            topBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+            topBar.widthAnchor.constraint(equalToConstant: 130),
+            topBar.heightAnchor.constraint(equalToConstant: 45)
+        ])
         
         floatingActionBar = FloatingActionBar()
         view.addSubview(floatingActionBar)
@@ -252,29 +264,6 @@ extension ViewController {
         for subView in scrollView.subviews {
             subView.transform = CGAffineTransform(scaleX: zoomScale, y: zoomScale)
         }
-        
-        //        guard let viewToZoom = gesture.view,
-        //              gesture.state == .changed else { return }
-        ////        print("The selected View to zoom is: \(viewToZoom)")
-        //
-        //        if viewToZoom == scrollView {
-        //            print("ScrollView zoom is currently: \(scrollView.zoomScale)")
-        //            var newScale = scrollView.zoomScale * gesture.scale
-        //            print("And the new scale is: \(newScale)")
-        //            scrollView.setZoomScale(newScale, animated: true)
-        //            scrollView.zoomScale = newScale
-        //        } else {
-        //            let currentScale = viewToZoom.frame.size.width / viewToZoom.bounds.size.width
-        //            var newScale = currentScale * (gesture.scale)
-        //
-        //            // Limit the zoom scale if needed
-        //            newScale = min(max(newScale, 0.5), 2.0)
-        //
-        //            let transform = viewToZoom.transform.scaledBy(x: newScale, y: newScale)
-        //            viewToZoom.transform = transform
-        //            gesture.scale = 1
-        //        }
-        
     }
     
     @objc func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
@@ -349,5 +338,19 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
         
         // Present the image picker with the overlay view controller
         present(imagePicker, animated: true, completion: nil)
+    }
+}
+
+extension ViewController: BoardNavigationBarDelegate {
+    func back() {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    func undo() {
+        print("Undo")
+    }
+    
+    func redo() {
+        print("Redo")
     }
 }
