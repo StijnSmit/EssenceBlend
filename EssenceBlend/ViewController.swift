@@ -50,10 +50,10 @@ class ViewController: UIViewController {
     lazy var itemSelectedMenu: UIMenu = {
         UIMenu(title: "Title", options: .displayInline, children: [
             UIAction(title: "Delete", handler: { _ in
-                print("MenuItem1")
+                self.deleteSelectedImage()
             }),
             UIAction(title: "Duplicate", handler: { [weak self] _ in
-                self?.showImagePickerOverlay()
+                    print("Duplicate")
             }),
             UIAction(title: "Preview", handler: { _ in
                 print("MenuItem1")
@@ -73,6 +73,11 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     override func viewDidLoad() {
@@ -341,16 +346,20 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
     }
 }
 
+extension ViewController {
+    func deleteSelectedImage() {
+        selectedImage?.removeFromSuperview()
+        selectedImage = nil
+        addedImage = nil
+    }
+}
+
 extension ViewController: BoardNavigationBarDelegate {
     func back() {
         navigationController?.popViewController(animated: true)
     }
     
-    func undo() {
-        print("Undo")
-    }
+    func undo() { print("Undo") }
     
-    func redo() {
-        print("Redo")
-    }
+    func redo() { print("Redo") }
 }
