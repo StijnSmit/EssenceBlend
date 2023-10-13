@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class WhiteBoardViewController: UIViewController {
     
     let paperColor = UIColor(red: 1.0, green: 0.995, blue: 0.951, alpha: 1.0)
     
@@ -146,7 +146,7 @@ class ViewController: UIViewController {
 }
 
 /// UI Setup
-extension ViewController {
+extension WhiteBoardViewController {
     
     func createScrollView() {
         
@@ -199,7 +199,7 @@ extension ViewController {
 }
 
 /// Create and Delete images
-extension ViewController {
+extension WhiteBoardViewController {
     
     func add(_ image: UIImage, at: CGPoint) {
         
@@ -230,7 +230,7 @@ extension ViewController {
 }
 
 /// Image selection and deselection
-extension ViewController {
+extension WhiteBoardViewController {
     
     func selectImageView(_ imageView:  UIImageView) {
         
@@ -259,7 +259,7 @@ extension ViewController {
 }
 
 /// Gesture handlers
-extension ViewController {
+extension WhiteBoardViewController {
     
     @objc func scrollViewTapped(_ gesture: UITapGestureRecognizer) {
         if let selectedImageView {
@@ -300,7 +300,7 @@ extension ViewController {
 }
 
 /// EditMenu
-extension ViewController: UIEditMenuInteractionDelegate {
+extension WhiteBoardViewController: UIEditMenuInteractionDelegate {
     
     func setupEditMenuInteraction() {
         
@@ -355,7 +355,7 @@ extension ViewController: UIEditMenuInteractionDelegate {
 }
 
 /// Image Picker
-extension ViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension WhiteBoardViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func showImagePickerOverlay() {
         
@@ -412,7 +412,7 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
     }
 }
 
-extension ViewController: BordNavigationBarDelegate {
+extension WhiteBoardViewController: BordNavigationBarDelegate {
     
     func back() {
         navigationController?.popViewController(animated: true)

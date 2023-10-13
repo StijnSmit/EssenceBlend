@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BordListViewController: UIViewController {
+class BoardListViewController: UIViewController {
     
     @IBOutlet weak var addButton: UIBarButtonItem!
     @IBOutlet weak var tableView: UITableView!
@@ -21,14 +21,14 @@ class BordListViewController: UIViewController {
     }
 }
 
-extension BordListViewController: UITableViewDelegate {
+extension BoardListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
-extension BordListViewController: UITableViewDataSource {
+extension BoardListViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         1
